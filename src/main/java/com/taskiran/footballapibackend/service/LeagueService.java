@@ -10,9 +10,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taskiran.footballapibackend.entity.League;
 import com.taskiran.footballapibackend.repository.LeagueRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class LeagueService {
-     @Autowired
+    @Autowired
     private FootballApiService footballApiService;
 
     @Autowired
@@ -39,7 +41,7 @@ public class LeagueService {
                     league.setId(leagueNode.path("league").path("id").asInt());
                     league.setName(leagueName);
                     league.setCountry(leagueNode.path("country").path("name").asText());
-                    league.setIconPath(leagueNode.path("league").path("logo").asText());
+                    league.setLogoUrl(leagueNode.path("league").path("logo").asText());
     
                     // Veritabanına kaydet
                     if (!leagueRepository.existsByName(league.getName())) {
@@ -51,5 +53,10 @@ public class LeagueService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public Long getLeagueIdByName(String leagueName) {
+        return leagueRepository.findIdByName(leagueName)
+            .orElseThrow(() -> new EntityNotFoundException("League not found"));
     }
 }

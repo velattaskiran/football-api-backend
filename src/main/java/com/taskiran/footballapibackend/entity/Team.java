@@ -13,8 +13,7 @@ import lombok.*;
 public class Team {    
     @Id
     @Column(name = "team_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "team_name", nullable = false)
     private String name;
@@ -22,6 +21,9 @@ public class Team {
     @Column(name = "country")
     private String country;
     
-    @Column(name = "icon_path")
-    private String iconPath;
+    @Column(name = "logo_url")
+    private String logo;
+
+    @Column(name = "league_id")
+    private Long leagueId;
 }

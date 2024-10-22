@@ -14,7 +14,6 @@ public class League {
 
     @Id
     @Column(name = "league_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "league_name", nullable = false)
@@ -23,6 +22,6 @@ public class League {
     @Column(name = "country")
     private String country;
     
-    @Column(name = "icon_path")
-    private String iconPath;
+    @Column(name = "logo_url")
+    private String logoUrl;
 }

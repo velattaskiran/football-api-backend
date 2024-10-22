@@ -1,9 +1,15 @@
 package com.taskiran.footballapibackend.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.taskiran.footballapibackend.entity.League;
 
 public interface LeagueRepository extends JpaRepository<League, Long> {
-    boolean existsByName(String name);  // Lig adını kontrol eden sorgu    
+    boolean existsByName(String name);  // Lig adını kontrol eden sorgu
+    
+    @Query("SELECT l.id FROM League l WHERE l.name = :name")
+    Optional<Long> findIdByName(String name);  // Lig ismiyle lig bulur   
 }
