@@ -19,10 +19,7 @@ public class LeagueController {
         leagueService.saveLeaguesToDatabase("Turkey", Arrays.asList("Süper Lig"));
         leagueService.saveLeaguesToDatabase("World", Arrays.asList("UEFA Champions League"));
         leagueService.saveLeaguesToDatabase("England", Arrays.asList("Premier League"));
-        leagueService.saveLeaguesToDatabase("Germany", Arrays.asList("Bundesliga"));
         leagueService.saveLeaguesToDatabase("Spain", Arrays.asList("La Liga"));
-        leagueService.saveLeaguesToDatabase("Italy", Arrays.asList("Serie A"));
-        leagueService.saveLeaguesToDatabase("France", Arrays.asList("Ligue 1"));
         return "Leagues saved successfully!";
     }
 

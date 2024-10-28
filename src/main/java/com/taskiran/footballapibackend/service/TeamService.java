@@ -49,10 +49,8 @@ public class TeamService {
                         team.setCountry(teamsArray.get(0).path("league").path("country").asText());
                         team.setLeagueId(leagueId);
 
-                        // Veritabanına kaydet
-                        if (!teamRepository.existsByName(team.getName())){
-                            teamRepository.save(team);
-                        }
+                        
+                        teamRepository.save(team);
                     }
                 }
             } else {
