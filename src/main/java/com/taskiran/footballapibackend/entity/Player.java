@@ -19,16 +19,16 @@ public class Player {
     private String name;
 
     @Column(name = "age")
-    private long age;
+    private Long age;
 
     @Column(name = "number")
-    private long number;
+    private Long number;
 
     @Column(name = "position")
     private String position;
 
     @Column(name = "team_id")
-    private long teamId;
+    private Long teamId;
 
     @Column(name = "team_name")
     private String teamName;

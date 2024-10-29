@@ -34,11 +34,11 @@ public class PlayerService {
 
                 player.setId(playerNode.path("id").asLong());
                 player.setName(playerNode.path("name").asText());
-                player.setAge(playerNode.path("age").asInt());
-                player.setNumber(playerNode.path("number").asInt());
+                player.setAge(playerNode.path("age").asLong());
+                player.setNumber(playerNode.path("number").asLong());
                 player.setPosition(playerNode.path("position").asText());
                 player.setPhoto(playerNode.path("photo").asText());
-                player.setTeamId(rootNode.path("response").get(0).path("team").path("id").asInt());
+                player.setTeamId(rootNode.path("response").get(0).path("team").path("id").asLong());
                 player.setTeamName(rootNode.path("response").get(0).path("team").path("name").asText());
     
                 // Veritabanına kaydet

@@ -38,7 +38,7 @@ public class LeagueService {
                 // Sadece seçili ligler listesinde olanları işle
                 if (selectedLeagues.contains(leagueName)) {
                     League league = new League();
-                    league.setId(leagueNode.path("league").path("id").asInt());
+                    league.setLeagueId(leagueNode.path("league").path("id").asLong());
                     league.setName(leagueName);
                     league.setCountry(leagueNode.path("country").path("name").asText());
                     league.setLogoUrl(leagueNode.path("league").path("logo").asText());

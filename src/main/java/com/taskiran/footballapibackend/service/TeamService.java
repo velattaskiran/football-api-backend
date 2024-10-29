@@ -7,7 +7,10 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taskiran.footballapibackend.entity.League;
 import com.taskiran.footballapibackend.entity.Team;
+import com.taskiran.footballapibackend.entity.TeamLeagues;
+import com.taskiran.footballapibackend.repository.TeamLeaguesRepository;
 import com.taskiran.footballapibackend.repository.TeamRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -21,7 +24,7 @@ public class TeamService {
     private TeamRepository teamRepository;
 
     @Autowired
-    private LeagueService leagueService;
+    private TeamLeaguesRepository teamLeaguesRepository;
 
     @Autowired
     ObjectMapper objectMapper = new ObjectMapper();
@@ -43,14 +46,18 @@ public class TeamService {
                 for (JsonNode standing : standingsNode) {
                     for (JsonNode teamNode : standing) {
                         Team team = new Team();
-                        team.setId(teamNode.path("team").path("id").asLong());
+                        team.setTeamId(teamNode.path("team").path("id").asLong());
                         team.setName(teamNode.path("team").path("name").asText());
                         team.setLogo(teamNode.path("team").path("logo").asText());
-                        team.setCountry(teamsArray.get(0).path("league").path("country").asText());
-                        team.setLeagueId(leagueId);
-
                         
                         teamRepository.save(team);
+
+                        // Team_Leagues ilişkisini oluştur ve kaydet
+                        TeamLeagues teamLeagues = new TeamLeagues();
+                        teamLeagues.setTeam(team);
+                        teamLeagues.setLeague(new League(leagueId));  // İlgili League ID'yi ayarla
+
+                        teamLeaguesRepository.save(teamLeagues);
                     }
                 }
             } else {
@@ -71,9 +78,5 @@ public class TeamService {
     public List<Long> getAllTeamIds() {
         return teamRepository.findAllTeamIds();
     }
-
-    public List<Long>  getTeamIdsByLeagueName(String leagueName) {
-        long leagueId = leagueService.getLeagueIdByName(leagueName);
-        return teamRepository.findAllTeamIdsByLeagueId(leagueId);
-    }
+    
 }

@@ -1,5 +1,7 @@
 package com.taskiran.footballapibackend.entity;
 
+import java.util.Set;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +16,7 @@ public class League {
 
     @Id
     @Column(name = "league_id")
-    private long id;
+    private Long leagueId;
 
     @Column(name = "league_name", nullable = false)
     private String name;
@@ -24,4 +26,11 @@ public class League {
     
     @Column(name = "logo_url")
     private String logoUrl;
+
+    @OneToMany(mappedBy = "league")
+    private Set<TeamLeagues> teamLeagues;
+    
+    public League(Long leagueId) {
+        this.leagueId = leagueId;
+    }
 }

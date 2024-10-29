@@ -15,7 +15,7 @@ public class FootballApiService {
 // Base URL & API KEY
 
     private final String baseUrl = "https://api-football-v1.p.rapidapi.com/v3";
-    private final String apiKey = "dc5141567cmsh404ce1a905247b5p1e1617jsnb7d7dcab8869";
+    private final String apiKey = "fb4ef21728msh72436ad99c90381p175dd3jsn75b1ce6c70cc";
 
 //  ** ------------------------------------------------------------------------------------------------------ **
 // Get Leagues
