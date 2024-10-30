@@ -74,7 +74,6 @@ public class TeamService {
             .orElseThrow(() -> new EntityNotFoundException("League not found"));
     }
 
-
     public List<Long> getAllTeamIds() {
         return teamRepository.findAllTeamIds();
     }

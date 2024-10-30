@@ -9,10 +9,10 @@ import org.springframework.data.jpa.repository.Query;
 import com.taskiran.footballapibackend.entity.Team;
 
 public interface TeamRepository extends JpaRepository <Team, Long> {
-    boolean existsByName(String name);  // Lig adını kontrol eden sorgu
+    boolean existsByName(String name);
           
     @Query("SELECT l.id FROM Team l WHERE l.name = :name")
-    Optional<Long> findTeamIdByName(String name);  // Lig ismiyle lig bulur
+    Optional<Long> findTeamIdByName(String name);
 
     @Query("SELECT l.id FROM Team l")
     List<Long> findAllTeamIds();

@@ -1,5 +1,7 @@
 package com.taskiran.footballapibackend.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,5 +52,9 @@ public class PlayerService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public List<Long> getAllPlayerIdsByTeamId(Long TeamId) {
+        return playerRepository.findAllPlayersByTeamId(TeamId);
     }
 }

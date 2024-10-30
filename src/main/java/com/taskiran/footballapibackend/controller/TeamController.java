@@ -20,14 +20,11 @@ public class TeamController {
     @GetMapping("/saveTeams")
     public String saveTeamsByLeagueName(@RequestParam String leagueName, @RequestParam Long season) {
         try {
-            // League ID'yi bul
             Long leagueId = leagueService.getLeagueIdByName(leagueName);
                         
-            // Takımları veritabanına kaydet
             teamService.saveTeamsToDatabase(leagueId, season);
             return "Teams saved successfully!";
         } catch (Exception e) {
-            // Hata durumunu logla veya uygun bir yanıt döndür
             System.out.println("Error: " + e.getMessage());
             return "Error: " + e.getMessage();
         }

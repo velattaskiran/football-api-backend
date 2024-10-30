@@ -13,7 +13,9 @@ public class DatabaseController {
     
     @Autowired
     private RestTemplate restTemplate;
-    
+
+// ** ------------------------------------------------------------------------------------------------------- **
+//  
     @GetMapping("/getTeams1")
     public String GetTeamsPartOne(){
 
@@ -25,6 +27,8 @@ public class DatabaseController {
         return "Teams Part One : Requests sent successfully!";
     }
 
+// ** ------------------------------------------------------------------------------------------------------- **
+// UEFA'da 36 takım var. Request hakkı dakikada 30. O yüzden ayrı ayrı çekilmeli.
     @GetMapping("/getPlayers1")
     public String GetPlayersPartOne(){
         List<String> leagues = new ArrayList<String>(List.of("UEFA Champions League"));
@@ -34,6 +38,8 @@ public class DatabaseController {
         return "Players Part One : Requests sent successfully!";
     }
 
+// ** ------------------------------------------------------------------------------------------------------- **
+// 
     @GetMapping("/getPlayers2")
     public String GetPlayersPartTwo(){
         List<String> leagues = new ArrayList<String>(List.of("Premier League"));
@@ -43,6 +49,8 @@ public class DatabaseController {
         return "Players Part One : Requests sent successfully!";
     }
 
+// ** ------------------------------------------------------------------------------------------------------- **
+// 
     @GetMapping("/getPlayers3")
     public String GetPlayersPartThree(){
         List<String> leagues = new ArrayList<String>(List.of("La Liga", "Süper Lig"));
@@ -51,4 +59,6 @@ public class DatabaseController {
         }
         return "Players Part Two : Requests sent successfully!";
     }
+    
+// ** ------------------------------------------------------------------------------------------------------- **
 }

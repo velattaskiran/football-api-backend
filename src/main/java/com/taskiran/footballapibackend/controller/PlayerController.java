@@ -23,6 +23,8 @@ public class PlayerController {
     @Autowired
     private TeamLeaguesService teamLeaguesService;
 
+// ** ------------------------------------------------------------------------------------------------------- **
+// Save Players With League Name
     @GetMapping("/savePlayers")
     public String savePlayers(@RequestParam String leagueName){
         List<Long> teamIds = teamLeaguesService.getTeamIdsByLeagueName(leagueName);
@@ -32,13 +34,17 @@ public class PlayerController {
         return "Players saved successfully!";
     }
 
+// ** ------------------------------------------------------------------------------------------------------- **
+// Save Players With Team Name
     @GetMapping("/savePlayersWithTeamName")
     public String savePlayersWithTeamName(@RequestParam String teamName){
         Long teamId = teamService.getTeamIdByName(teamName);
         playerService.savePlayersToDatabase(teamId);
         return "Players saved successfully!";
     }
-    
+
+// ** ------------------------------------------------------------------------------------------------------- **
+// Save Players With Team ID    
     @GetMapping("/savePlayersWithTeamId")
     public String savePlayersWithTeamId(@RequestParam Long teamId){
         playerService.savePlayersToDatabase(teamId);
