@@ -1,6 +1,7 @@
 package com.taskiran.footballapibackend.service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class PlayerStatisticsService {
 
         while (pageNo <= pageTotal){            
             try {
+                TimeUnit.SECONDS.sleep(2);
                 String json = footballApiService.getPlayerStatisticsByTeamIdAndLeagueId(teamId, leagueId, pageNo);
                 
                 JsonNode rootNode = objectMapper.readTree(json);
@@ -84,10 +86,21 @@ public class PlayerStatisticsService {
                         playerStatistic.setPenaltyMissed(playerStatisticNode.path("penalty").path("missed").asLong());
                         playerStatistic.setPenaltySaved(playerStatisticNode.path("penalty").path("saved").asLong());
 
-                        playerStatisticsRepository.save(playerStatistic);
+                        if (playerStatisticsRepository.existsByPlayerIdAndLeagueId(playerStatistic.getPlayerId(), leagueId)){
+                            PlayerStatistic existingStatistic = playerStatisticsRepository.findByPlayerIdAndLeagueId(playerStatistic.getPlayerId(), leagueId);
+    
+                            // ID'yi koruyarak, tüm alanları yeni nesneden güncelle
+                            playerStatistic.setId(existingStatistic.getId());
+                            
+                            // Güncellenmiş nesneyi kaydet
+                            playerStatisticsRepository.save(playerStatistic);
+                        }else {
+                            playerStatisticsRepository.save(playerStatistic);
+                        }
                     }            
                 }
-            pageNo = pageNo + 1;
+            pageNo = pageNo + 1;            
+            TimeUnit.SECONDS.sleep(2);
             } catch (Exception e) {
                 e.printStackTrace();
             }            

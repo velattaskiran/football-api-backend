@@ -8,11 +8,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.taskiran.footballapibackend.repository.LeagueRepository;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 @RestController
 public class DatabaseController {
     
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private LeagueRepository leagueRepository;
+    
+    private Integer requestCount = 0;
+    private Integer apiCount     = 0;
 
 // ** ------------------------------------------------------------------------------------------------------- **
 //  
@@ -61,4 +74,17 @@ public class DatabaseController {
     }
     
 // ** ------------------------------------------------------------------------------------------------------- **
+    @GetMapping("/getPlayersStatistics")
+    public String GetPlayersStatistics(){
+
+        // List<Long> leagueIds = leagueRepository.findAllLeagueIds();
+
+        // for (Long leagueId : leagueIds){
+        //     restTemplate.getForObject("http://localhost:8081/savePlayerStatisticsByLeagueId?leagueId="+ leagueId.toString(), String.class);
+        // }
+        
+        restTemplate.getForObject("http://localhost:8081/savePlayerStatisticsByLeagueId?leagueId=140", String.class);
+        
+        return "Players Statistics: Requests sent successfully!";
+    }
 }
