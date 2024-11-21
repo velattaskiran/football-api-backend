@@ -12,6 +12,7 @@ import com.taskiran.footballapibackend.entity.Team;
 import com.taskiran.footballapibackend.entity.TeamLeagues;
 import com.taskiran.footballapibackend.repository.TeamLeaguesRepository;
 import com.taskiran.footballapibackend.repository.TeamRepository;
+import com.taskiran.footballapibackend.request.AddTeamRequest;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -25,7 +26,10 @@ public class TeamService {
 
     @Autowired
     private TeamLeaguesRepository teamLeaguesRepository;
-
+    
+    @Autowired
+    private LeagueService leagueService;
+    
     @Autowired
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -76,6 +80,18 @@ public class TeamService {
 
     public List<Long> getAllTeamIds() {
         return teamRepository.findAllTeamIds();
+    }
+
+    public String addTeam(AddTeamRequest request) {
+        try {
+            Long leagueId = leagueService.getLeagueIdByName(request.getLeagueName());
+                        
+            saveTeamsToDatabase(leagueId, request.getSeason());
+            return "Teams saved successfully!";
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return "Error: " + e.getMessage();
+        }
     }
     
 }
