@@ -9,11 +9,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taskiran.footballapibackend.entity.Player;
 import com.taskiran.footballapibackend.repository.PlayerRepository;
+import com.taskiran.footballapibackend.request.AddPlayerRequest;
 
 @Service
 public class PlayerService {
     @Autowired
     private FootballApiService footballApiService;
+
+    @Autowired
+    private TeamLeaguesService teamLeaguesService;
+
+    @Autowired
+    private TeamService teamService;
 
     @Autowired
     private PlayerRepository playerRepository;
@@ -56,5 +63,24 @@ public class PlayerService {
     
     public List<Long> getAllPlayerIdsByTeamId(Long TeamId) {
         return playerRepository.findAllPlayersByTeamId(TeamId);
+    }
+
+    public String addPlayersByLeagueName(AddPlayerRequest request){
+        List<Long> teamIds = teamLeaguesService.getTeamIdsByLeagueName(request.getLeagueName());
+        for (Long teamId : teamIds){
+            savePlayersToDatabase(teamId);
+        }
+        return "Players saved successfully!";
+    }
+
+    public String addPlayersByTeamName(AddPlayerRequest request){
+        try{
+            Long teamId = teamService.getTeamIdByName(request.getTeamName());
+            savePlayersToDatabase(teamId);
+            return "Players saved successfully!";
+        }  catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return "Error: " + e.getMessage();
+        }
     }
 }

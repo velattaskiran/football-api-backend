@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.taskiran.footballapibackend.entity.PlayerStatistic;
 import com.taskiran.footballapibackend.entity.teamstat.BiggestStatistic;
 import com.taskiran.footballapibackend.entity.teamstat.FixtureStatistic;
 import com.taskiran.footballapibackend.entity.teamstat.GoalStatistic;
@@ -16,6 +15,7 @@ import com.taskiran.footballapibackend.entity.teamstat.TeamStatistic;
 import com.taskiran.footballapibackend.entity.teamstat.UnderOverStatistic;
 import com.taskiran.footballapibackend.entity.teamstat.UnderOverType;
 import com.taskiran.footballapibackend.repository.TeamStatisticsRepository;
+import com.taskiran.footballapibackend.request.AddTeamStatisticsRequest;
 
 @Service
 public class TeamStatisticsService {
@@ -25,6 +25,12 @@ public class TeamStatisticsService {
 
     @Autowired
     private FootballApiService footballApiService;
+
+    @Autowired
+    private TeamService teamService;
+    
+    @Autowired
+    private LeagueService leagueService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -338,5 +344,18 @@ public class TeamStatisticsService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String addTeamStatistics(AddTeamStatisticsRequest request){
+        try{
+            Long teamId     = teamService.getTeamIdByName(request.getTeamName());
+            Long leagueId   = leagueService.getLeagueIdByName(request.getLeagueName());
+            saveTeamStatisticsToDatabase(teamId, leagueId);
+            return "Team Statistic saved successfully!";
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return "Error: " + e.getMessage();
+        }
+    
     }
 }

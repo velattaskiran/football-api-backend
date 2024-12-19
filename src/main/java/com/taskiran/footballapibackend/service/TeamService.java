@@ -84,8 +84,7 @@ public class TeamService {
 
     public String addTeam(AddTeamRequest request) {
         try {
-            Long leagueId = leagueService.getLeagueIdByName(request.getLeagueName());
-                        
+            Long leagueId = leagueService.getLeagueIdByName(request.getLeagueName());                        
             saveTeamsToDatabase(leagueId, request.getSeason());
             return "Teams saved successfully!";
         } catch (Exception e) {

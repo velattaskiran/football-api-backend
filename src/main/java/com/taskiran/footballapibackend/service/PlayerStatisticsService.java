@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taskiran.footballapibackend.entity.PlayerStatistic;
 import com.taskiran.footballapibackend.repository.PlayerStatisticsRepository;
+import com.taskiran.footballapibackend.repository.TeamLeaguesRepository;
+import com.taskiran.footballapibackend.request.AddPlayerStatisticRequest;
 
 @Service
 public class PlayerStatisticsService {
@@ -20,7 +22,16 @@ public class PlayerStatisticsService {
     private PlayerService playerService;
 
     @Autowired
+    private TeamService teamService;
+
+    @Autowired
+    private LeagueService leagueService;
+
+    @Autowired
     private PlayerStatisticsRepository playerStatisticsRepository;
+
+    @Autowired
+    private TeamLeaguesRepository teamLeaguesRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -104,6 +115,32 @@ public class PlayerStatisticsService {
             } catch (Exception e) {
                 e.printStackTrace();
             }            
+        }
+    }
+
+    public String addPlayerStatistics(AddPlayerStatisticRequest request){
+        try {
+            Long teamId = teamService.getTeamIdByName(request.getTeamName());
+            Long leagueId = leagueService.getLeagueIdByName(request.getLeagueName());
+            savePlayerStatisticsToDatabase(teamId, leagueId);
+            return ("For "+ request.getLeagueName() + ", " + request.getTeamName() + " players saved successfully!");
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    public String addPlayerStatisticsByLeagueName(AddPlayerStatisticRequest request){
+        try{
+            Long leagueId = leagueService.getLeagueIdByName(request.getLeagueName());
+            List<Long> teamIds = teamLeaguesRepository.findAllTeamIdsByLeagueId(leagueId);
+            for (Long teamId : teamIds){
+                savePlayerStatisticsToDatabase(teamId, leagueId);
+            }
+            return ("For "+ request.getLeagueName() + " players saved successfully!");
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return "Error: " + e.getMessage();
         }
     }
 }

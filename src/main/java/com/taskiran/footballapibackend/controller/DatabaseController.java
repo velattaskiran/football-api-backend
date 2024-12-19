@@ -1,3 +1,6 @@
+// ** ------------------------------------------------------------------------------------------------------- **
+/* Bu kısım düzenli aralıklarla istatistikleri çekmek için düzenlenecektir. @GetMapping ile yapılmıştı fakat 
+kodlar @PostMappig'e göre düzenlendiği için burası da düzenlenecek. */
 package com.taskiran.footballapibackend.controller;
 
 import java.util.List;

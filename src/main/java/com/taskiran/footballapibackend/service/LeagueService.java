@@ -1,5 +1,6 @@
 package com.taskiran.footballapibackend.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,12 @@ public class LeagueService {
             // JSON'u ayrıştır
             JsonNode rootNode = objectMapper.readTree(json);
             JsonNode leaguesArray = rootNode.path("response");
-    
+            // TODO: Add new object for json in dto, mapping example -> https://www.baeldung.com/jackson-mapping-dynamic-object
+            // TODO: add validation method in helper class
+
+
             for (JsonNode leagueNode : leaguesArray) {
+                
                 String leagueName = leagueNode.path("league").path("name").asText();
     
                 // Sadece seçili ligler listesinde olanları işle
@@ -59,4 +64,19 @@ public class LeagueService {
         return leagueRepository.findIdByName(leagueName)
             .orElseThrow(() -> new EntityNotFoundException("League not found"));
     }
+
+// ** ------------------------------------------------------------------------------------------------------- **
+// Save Leagues
+    public String addLeague(){
+        try{
+            saveLeaguesToDatabase("Turkey", Arrays.asList("Süper Lig"));
+            saveLeaguesToDatabase("World", Arrays.asList("UEFA Champions League"));
+            saveLeaguesToDatabase("England", Arrays.asList("Premier League"));
+            saveLeaguesToDatabase("Spain", Arrays.asList("La Liga"));
+            return "Leagues saved successfully!";
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return "Error: " + e.getMessage();
+        }
+    }    
 }
