@@ -14,6 +14,9 @@ public interface TeamRepository extends JpaRepository <Team, Long> {
     @Query("SELECT l.id FROM Team l WHERE l.name = :name")
     Optional<Long> findTeamIdByName(String name);
 
+    @Query("SELECT l.name FROM Team l WHERE l.id = :id")
+    String findTeamNameById(Long id);
+
     @Query("SELECT l.id FROM Team l")
     List<Long> findAllTeamIds();
 }

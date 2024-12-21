@@ -9,21 +9,33 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 @Service
 public class FootballApiService {
 
     // TODO: Rest API yerine feign client /// https://www.javacodegeeks.com/2024/04/feign-vs-resttemplate-picking-your-spring-client.html
+    
+// ** ------------------------------------------------------------------------------------------------------- **
+// Request Count & Max
+    final Integer maxRequestNumber = 90;
+    private Integer requestCount = 0;
 
 // ** ------------------------------------------------------------------------------------------------------- **
 // Base URL & API KEY
 
     String baseUrl = "https://api-football-v1.p.rapidapi.com/v3";
 
-    final Integer apiIndex = 1;
+    private Integer apiIndex = 1;
 
     private static final List<String> apiKeyList =  List.of(
-        "fb4ef21728msh72436ad99c90381p175dd3jsn75b1ce6c70cc", // welattaskiran@gmail.com        
-        "dc5141567cmsh404ce1a905247b5p1e1617jsnb7d7dcab8869"  // velattaskiran@gmail.com
+        "fb4ef21728msh72436ad99c90381p175dd3jsn75b1ce6c70cc",       // welattaskiran@gmail.com        
+        "dc5141567cmsh404ce1a905247b5p1e1617jsnb7d7dcab8869",       // velattaskiran@gmail.com
+        "f4665ec969mshadc960b76f17024p126073jsnca246195ab51",       // zekiitaskiran@gmail.com
+        "3a2a3d14abmshc90d74a217fe62ap1c5870jsn3335ede767b4"        // taskiranwelatt@gmail.com
     );
 
 // ** ------------------------------------------------------------------------------------------------------- **
@@ -39,6 +51,8 @@ public class FootballApiService {
         HttpEntity<String> entity = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         
+        checkRequestCount();
+
         return response.getBody();
     }
 
@@ -79,5 +93,15 @@ public class FootballApiService {
     public String getTeamStatisticsByTeamIdAndLeagueId(Long teamId, Long leagueId) {
         String endpoint = "/teams/statistics?league=" + leagueId.toString()  + "&season=2024&team="  + teamId.toString();
         return makeApiRequest(endpoint, apiIndex);
+    }
+
+// ** ------------------------------------------------------------------------------------------------------- **
+// Check Request Count
+    private void checkRequestCount(){
+        requestCount++;
+        if (requestCount > maxRequestNumber) {
+            requestCount = 0;
+            apiIndex++;
+        }
     }
 }

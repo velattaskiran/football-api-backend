@@ -1,12 +1,14 @@
 package com.taskiran.footballapibackend.service;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taskiran.footballapibackend.dto.AddTeamStatisticsRequest;
 import com.taskiran.footballapibackend.entity.teamstat.BiggestStatistic;
 import com.taskiran.footballapibackend.entity.teamstat.FixtureStatistic;
 import com.taskiran.footballapibackend.entity.teamstat.GoalStatistic;
@@ -15,7 +17,6 @@ import com.taskiran.footballapibackend.entity.teamstat.TeamStatistic;
 import com.taskiran.footballapibackend.entity.teamstat.UnderOverStatistic;
 import com.taskiran.footballapibackend.entity.teamstat.UnderOverType;
 import com.taskiran.footballapibackend.repository.TeamStatisticsRepository;
-import com.taskiran.footballapibackend.request.AddTeamStatisticsRequest;
 
 @Service
 public class TeamStatisticsService {
@@ -341,6 +342,7 @@ public class TeamStatisticsService {
             }else {
                 teamStatisticsRepository.save(teamStatistic);
             }
+            TimeUnit.SECONDS.sleep(2);
         } catch (Exception e) {
             e.printStackTrace();
         }

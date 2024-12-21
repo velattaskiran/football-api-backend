@@ -1,4 +1,4 @@
-package com.taskiran.footballapibackend.request;
+package com.taskiran.footballapibackend.dto;
 
 import lombok.Getter;
 import lombok.Setter;

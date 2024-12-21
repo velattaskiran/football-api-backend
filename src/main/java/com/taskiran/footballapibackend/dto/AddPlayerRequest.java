@@ -1,11 +1,11 @@
-package com.taskiran.footballapibackend.request;
+package com.taskiran.footballapibackend.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class AddPlayerStatisticRequest {
+public class AddPlayerRequest {
     String leagueName;
     String teamName;
 }

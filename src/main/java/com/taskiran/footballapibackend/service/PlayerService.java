@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taskiran.footballapibackend.dto.AddPlayerRequest;
 import com.taskiran.footballapibackend.entity.Player;
 import com.taskiran.footballapibackend.repository.PlayerRepository;
-import com.taskiran.footballapibackend.request.AddPlayerRequest;
 
 @Service
 public class PlayerService {

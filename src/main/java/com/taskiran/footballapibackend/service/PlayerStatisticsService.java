@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taskiran.footballapibackend.dto.AddPlayerStatisticRequest;
 import com.taskiran.footballapibackend.entity.PlayerStatistic;
 import com.taskiran.footballapibackend.repository.PlayerStatisticsRepository;
 import com.taskiran.footballapibackend.repository.TeamLeaguesRepository;
-import com.taskiran.footballapibackend.request.AddPlayerStatisticRequest;
 
 @Service
 public class PlayerStatisticsService {
@@ -110,8 +110,8 @@ public class PlayerStatisticsService {
                         }
                     }            
                 }
-            pageNo = pageNo + 1;            
-            TimeUnit.SECONDS.sleep(2);
+                pageNo = pageNo + 1;
+                TimeUnit.SECONDS.sleep(2);
             } catch (Exception e) {
                 e.printStackTrace();
             }            
@@ -123,7 +123,7 @@ public class PlayerStatisticsService {
             Long teamId = teamService.getTeamIdByName(request.getTeamName());
             Long leagueId = leagueService.getLeagueIdByName(request.getLeagueName());
             savePlayerStatisticsToDatabase(teamId, leagueId);
-            return ("For "+ request.getLeagueName() + ", " + request.getTeamName() + " players saved successfully!");
+            return ("For "+ request.getLeagueName() + ", " + request.getTeamName() + " players statistics saved successfully!");
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
             return "Error: " + e.getMessage();
@@ -137,7 +137,7 @@ public class PlayerStatisticsService {
             for (Long teamId : teamIds){
                 savePlayerStatisticsToDatabase(teamId, leagueId);
             }
-            return ("For "+ request.getLeagueName() + " players saved successfully!");
+            return ("For "+ request.getLeagueName() + " players statistics saved successfully!");
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
             return "Error: " + e.getMessage();

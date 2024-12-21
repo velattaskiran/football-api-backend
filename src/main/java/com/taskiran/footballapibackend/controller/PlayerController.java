@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.taskiran.footballapibackend.request.AddPlayerRequest;
+import com.taskiran.footballapibackend.dto.AddPlayerRequest;
 import com.taskiran.footballapibackend.service.PlayerService;
 
 @RestController

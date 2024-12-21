@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.taskiran.footballapibackend.dto.AddTeamRequest;
 import com.taskiran.footballapibackend.entity.League;
 import com.taskiran.footballapibackend.entity.Team;
 import com.taskiran.footballapibackend.entity.TeamLeagues;
 import com.taskiran.footballapibackend.repository.TeamLeaguesRepository;
 import com.taskiran.footballapibackend.repository.TeamRepository;
-import com.taskiran.footballapibackend.request.AddTeamRequest;
 
 import jakarta.persistence.EntityNotFoundException;
 

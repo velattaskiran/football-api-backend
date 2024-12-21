@@ -16,4 +16,7 @@ public interface LeagueRepository extends JpaRepository<League, Long> {
 
     @Query("SELECT l.id FROM League l")
     List<Long> findAllLeagueIds();
+    
+    @Query("SELECT l.name FROM League l")
+    List<String> findAllLeagueNames();
 }
