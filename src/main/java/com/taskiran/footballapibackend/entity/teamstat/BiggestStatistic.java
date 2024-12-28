@@ -50,7 +50,7 @@ public class BiggestStatistic {
     private Long goalsAgainstAway;
 
     // TeamStatistic ile ilişki
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "team_statistic_id", referencedColumnName = "statistic_id")
     private TeamStatistic teamStatistic;
     

@@ -29,7 +29,7 @@ public class MinuteStatistic {
     @Column(name = "type")
     private UnderOverType type; // "FOR" veya "AGAINST"
     
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "goal_statistic_id")
     private GoalStatistic goalStatistic;
 }

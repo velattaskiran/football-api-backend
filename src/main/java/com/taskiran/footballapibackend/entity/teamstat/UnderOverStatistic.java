@@ -30,7 +30,7 @@ public class UnderOverStatistic {
     private UnderOverType type; // "FOR" veya "AGAINST"
 
     // İlişki
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "goal_statistic_id", referencedColumnName = "id")
     private GoalStatistic goalStatistic;
 }

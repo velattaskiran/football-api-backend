@@ -59,7 +59,7 @@ public class TeamStatisticsService {
             teamStatistic.setPenaltyScoredPercentage(response.path("penalty").path("scored").path("percentage").asText());
             teamStatistic.setPenaltyMissed(response.path("penalty").path("missed").path("total").asLong());
             teamStatistic.setPenaltyMissedPercentage(response.path("penalty").path("missed").path("percentage").asText());
-
+            
             FixtureStatistic fixtureStatistic = FixtureStatistic.builder()
                 .playedHome(response.path("fixtures").path("played").path("home").asLong())
                 .playedAway(response.path("fixtures").path("played").path("away").asLong())
@@ -333,9 +333,12 @@ public class TeamStatisticsService {
 
             if (teamStatisticsRepository.existsByTeamIdAndLeagueId(teamStatistic.getTeamId(), teamStatistic.getLeagueId())){
                 TeamStatistic existingStatistic = teamStatisticsRepository.findByTeamIdAndLeagueId(teamStatistic.getTeamId(), teamStatistic.getLeagueId());
+                
+                Long repeatId = existingStatistic.getId();                
+                teamStatisticsRepository.deleteById(repeatId);
 
                 // ID'yi koruyarak, tüm alanları yeni nesneden güncelle
-                teamStatistic.setId(existingStatistic.getId());
+                teamStatistic.setId(repeatId);
                 
                 // Güncellenmiş nesneyi kaydet
                 teamStatisticsRepository.save(teamStatistic);

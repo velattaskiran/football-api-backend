@@ -62,6 +62,5 @@ public class TaskService {
             String response = restTemplate.postForObject(url, request, String.class);
             System.out.println(leagueName + " --- Response :" + response);
         }
-
     }
 }

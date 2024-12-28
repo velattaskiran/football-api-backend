@@ -52,7 +52,7 @@ public class FixtureStatistic {
     private Long losesTotal;
 
     // TeamStatistic ile ilişki
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "team_statistic_id", referencedColumnName = "statistic_id")
     private TeamStatistic teamStatistic;
 }
