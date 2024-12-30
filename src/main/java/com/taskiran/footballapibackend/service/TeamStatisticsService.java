@@ -1,6 +1,5 @@
 package com.taskiran.footballapibackend.service;
 
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +11,7 @@ import com.taskiran.footballapibackend.dto.AddTeamStatisticsRequest;
 import com.taskiran.footballapibackend.entity.teamstat.BiggestStatistic;
 import com.taskiran.footballapibackend.entity.teamstat.FixtureStatistic;
 import com.taskiran.footballapibackend.entity.teamstat.GoalStatistic;
-import com.taskiran.footballapibackend.entity.teamstat.MinuteStatistic;
 import com.taskiran.footballapibackend.entity.teamstat.TeamStatistic;
-import com.taskiran.footballapibackend.entity.teamstat.UnderOverStatistic;
-import com.taskiran.footballapibackend.entity.teamstat.UnderOverType;
 import com.taskiran.footballapibackend.repository.TeamStatisticsRepository;
 
 @Service
@@ -43,7 +39,13 @@ public class TeamStatisticsService {
             JsonNode rootNode   = objectMapper.readTree(json);
             JsonNode response   = rootNode.path("response");
 
-            TeamStatistic teamStatistic = new TeamStatistic();
+            TeamStatistic teamStatistic = null;
+
+            if (teamStatisticsRepository.existsByTeamIdAndLeagueId(response.path("team").path("id").asLong(), response.path("league").path("id").asLong())){
+                teamStatistic = teamStatisticsRepository.findByTeamIdAndLeagueId(response.path("team").path("id").asLong(), response.path("league").path("id").asLong());
+            }else {
+                teamStatistic = new TeamStatistic();
+            }
 
             teamStatistic.setTeamId(response.path("team").path("id").asLong());
             teamStatistic.setLeagueId(response.path("league").path("id").asLong());
@@ -59,241 +61,118 @@ public class TeamStatisticsService {
             teamStatistic.setPenaltyScoredPercentage(response.path("penalty").path("scored").path("percentage").asText());
             teamStatistic.setPenaltyMissed(response.path("penalty").path("missed").path("total").asLong());
             teamStatistic.setPenaltyMissedPercentage(response.path("penalty").path("missed").path("percentage").asText());
-            
-            FixtureStatistic fixtureStatistic = FixtureStatistic.builder()
-                .playedHome(response.path("fixtures").path("played").path("home").asLong())
-                .playedAway(response.path("fixtures").path("played").path("away").asLong())
-                .playedTotal(response.path("fixtures").path("played").path("total").asLong())
-                .winsHome(response.path("fixtures").path("wins").path("home").asLong())
-                .winsAway(response.path("fixtures").path("wins").path("away").asLong())
-                .winsTotal(response.path("fixtures").path("wins").path("total").asLong())
-                .drawsHome(response.path("fixtures").path("draws").path("home").asLong())
-                .drawsAway(response.path("fixtures").path("draws").path("away").asLong())
-                .drawsTotal(response.path("fixtures").path("draws").path("total").asLong())
-                .losesHome(response.path("fixtures").path("loses").path("home").asLong())
-                .losesAway(response.path("fixtures").path("loses").path("away").asLong())
-                .losesTotal(response.path("fixtures").path("loses").path("total").asLong())
+
+            FixtureStatistic fixtureStatistic = teamStatistic.getFixtureStatistic();
+            if (fixtureStatistic == null) {
+                fixtureStatistic = FixtureStatistic.builder()
+                    .teamStatistic(teamStatistic)
+                    .build();
+                teamStatistic.setFixtureStatistic(fixtureStatistic);
+            }
+            fixtureStatistic.setPlayedHome(response.path("fixtures").path("played").path("home").asLong());
+            fixtureStatistic.setPlayedAway(response.path("fixtures").path("played").path("away").asLong());
+            fixtureStatistic.setPlayedTotal(response.path("fixtures").path("played").path("total").asLong());
+            fixtureStatistic.setWinsHome(response.path("fixtures").path("wins").path("home").asLong());
+            fixtureStatistic.setWinsAway(response.path("fixtures").path("wins").path("away").asLong());
+            fixtureStatistic.setWinsTotal(response.path("fixtures").path("wins").path("total").asLong());
+            fixtureStatistic.setDrawsHome(response.path("fixtures").path("draws").path("home").asLong());
+            fixtureStatistic.setDrawsAway(response.path("fixtures").path("draws").path("away").asLong());
+            fixtureStatistic.setDrawsTotal(response.path("fixtures").path("draws").path("total").asLong());
+            fixtureStatistic.setLosesHome(response.path("fixtures").path("loses").path("home").asLong());
+            fixtureStatistic.setLosesAway(response.path("fixtures").path("loses").path("away").asLong());
+            fixtureStatistic.setLosesTotal(response.path("fixtures").path("loses").path("total").asLong());
+
+
+            GoalStatistic goalStatistic = teamStatistic.getGoalStatistic();
+            if (goalStatistic == null) {
+                goalStatistic = GoalStatistic.builder()
+                    .teamStatistic(teamStatistic)
+                    .build();
+                teamStatistic.setGoalStatistic(goalStatistic);
+            }
+            goalStatistic.setGoalsForHome(response.path("goals").path("for").path("total").path("home").asLong());
+            goalStatistic.setGoalsForAway(response.path("goals").path("for").path("total").path("away").asLong());
+            goalStatistic.setGoalsForTotal(response.path("goals").path("for").path("total").path("total").asLong());
+            goalStatistic.setGoalsAgainstHome(response.path("goals").path("against").path("total").path("home").asLong());
+            goalStatistic.setGoalsAgainstAway(response.path("goals").path("against").path("total").path("away").asLong());
+            goalStatistic.setGoalsAgainstTotal(response.path("goals").path("against").path("total").path("total").asLong());
+            goalStatistic.setAverageGoalsForHome(response.path("goals").path("for").path("average").path("home").asText());
+            goalStatistic.setAverageGoalsForAway(response.path("goals").path("for").path("average").path("away").asText());
+            goalStatistic.setAverageGoalsForTotal(response.path("goals").path("for").path("average").path("total").asText());
+            goalStatistic.setAverageGoalsAgainstHome(response.path("goals").path("against").path("average").path("home").asText());
+            goalStatistic.setAverageGoalsAgainstAway(response.path("goals").path("against").path("average").path("away").asText());
+            goalStatistic.setAverageGoalsAgainstTotal(response.path("goals").path("against").path("average").path("total").asText());
+            goalStatistic.setOver0_5ForGoals(response.path("goals").path("for").path("under_over").path("0.5").path("over").asLong());
+            goalStatistic.setUnder0_5ForGoals(response.path("goals").path("for").path("under_over").path("0.5").path("under").asLong());
+            goalStatistic.setOver1_5ForGoals(response.path("goals").path("for").path("under_over").path("1.5").path("over").asLong());
+            goalStatistic.setUnder1_5ForGoals(response.path("goals").path("for").path("under_over").path("1.5").path("under").asLong());
+            goalStatistic.setOver2_5ForGoals(response.path("goals").path("for").path("under_over").path("2.5").path("over").asLong());
+            goalStatistic.setUnder2_5ForGoals(response.path("goals").path("for").path("under_over").path("2.5").path("under").asLong());
+            goalStatistic.setOver3_5ForGoals(response.path("goals").path("for").path("under_over").path("3.5").path("over").asLong());
+            goalStatistic.setUnder3_5ForGoals(response.path("goals").path("for").path("under_over").path("3.5").path("under").asLong());
+            goalStatistic.setOver4_5ForGoals(response.path("goals").path("for").path("under_over").path("4.5").path("over").asLong());
+            goalStatistic.setUnder4_5ForGoals(response.path("goals").path("for").path("under_over").path("4.5").path("under").asLong());
+            goalStatistic.setOver0_5AgGoals(response.path("goals").path("against").path("under_over").path("0.5").path("over").asLong());
+            goalStatistic.setUnder0_5AgGoals(response.path("goals").path("against").path("under_over").path("0.5").path("under").asLong());
+            goalStatistic.setOver1_5AgGoals(response.path("goals").path("against").path("under_over").path("1.5").path("over").asLong());
+            goalStatistic.setUnder1_5AgGoals(response.path("goals").path("against").path("under_over").path("1.5").path("under").asLong());
+            goalStatistic.setOver2_5AgGoals(response.path("goals").path("against").path("under_over").path("2.5").path("over").asLong());
+            goalStatistic.setUnder2_5AgGoals(response.path("goals").path("against").path("under_over").path("2.5").path("under").asLong());
+            goalStatistic.setOver3_5AgGoals(response.path("goals").path("against").path("under_over").path("3.5").path("over").asLong());
+            goalStatistic.setUnder3_5AgGoals(response.path("goals").path("against").path("under_over").path("3.5").path("under").asLong());
+            goalStatistic.setOver4_5AgGoals(response.path("goals").path("against").path("under_over").path("4.5").path("over").asLong());
+            goalStatistic.setUnder4_5AgGoals(response.path("goals").path("against").path("under_over").path("4.5").path("under").asLong());
+            goalStatistic.setTotalForGoals0to15Min(response.path("goals").path("for").path("minute").path("0-15").path("total").asLong());
+            goalStatistic.setAvgForGoals0to15Min(response.path("goals").path("for").path("minute").path("0-15").path("percentage").asText());
+            goalStatistic.setTotalForGoals16to30Min(response.path("goals").path("for").path("minute").path("16-30").path("total").asLong());
+            goalStatistic.setAvgForGoals16to30Min(response.path("goals").path("for").path("minute").path("16-30").path("percentage").asText());
+            goalStatistic.setTotalForGoals31to45Min(response.path("goals").path("for").path("minute").path("31-45").path("total").asLong());
+            goalStatistic.setAvgForGoals31to45Min(response.path("goals").path("for").path("minute").path("31-45").path("percentage").asText());
+            goalStatistic.setTotalForGoals46to60Min(response.path("goals").path("for").path("minute").path("46-60").path("total").asLong());
+            goalStatistic.setAvgForGoals46to60Min(response.path("goals").path("for").path("minute").path("46-60").path("percentage").asText());
+            goalStatistic.setTotalForGoals61to75Min(response.path("goals").path("for").path("minute").path("61-75").path("total").asLong());
+            goalStatistic.setAvgForGoals61to75Min(response.path("goals").path("for").path("minute").path("61-75").path("percentage").asText());
+            goalStatistic.setTotalForGoals76to90Min(response.path("goals").path("for").path("minute").path("76-90").path("total").asLong());
+            goalStatistic.setAvgForGoals76to90Min(response.path("goals").path("for").path("minute").path("76-90").path("percentage").asText());
+            goalStatistic.setTotalForGoals91to105Min(response.path("goals").path("for").path("minute").path("91-105").path("total").asLong());
+            goalStatistic.setAvgForGoals91to105Min(response.path("goals").path("for").path("minute").path("91-105").path("percentage").asText());
+            goalStatistic.setTotalForGoals106to120Min(response.path("goals").path("for").path("minute").path("106-120").path("total").asLong());
+            goalStatistic.setAvgForGoals106to120Min(response.path("goals").path("for").path("minute").path("106-120").path("percentage").asText());
+            goalStatistic.setTotalAgGoals0to15Min(response.path("goals").path("against").path("minute").path("0-15").path("total").asLong());
+            goalStatistic.setAvgAgGoals0to15Min(response.path("goals").path("against").path("minute").path("0-15").path("percentage").asText());
+            goalStatistic.setTotalAgGoals16to30Min(response.path("goals").path("against").path("minute").path("16-30").path("total").asLong());
+            goalStatistic.setAvgAgGoals16to30Min(response.path("goals").path("against").path("minute").path("16-30").path("percentage").asText());
+            goalStatistic.setTotalAgGoals31to45Min(response.path("goals").path("against").path("minute").path("31-45").path("total").asLong());
+            goalStatistic.setAvgAgGoals31to45Min(response.path("goals").path("against").path("minute").path("31-45").path("percentage").asText());
+            goalStatistic.setTotalAgGoals46to60Min(response.path("goals").path("against").path("minute").path("46-60").path("total").asLong());
+            goalStatistic.setAvgAgGoals46to60Min(response.path("goals").path("against").path("minute").path("46-60").path("percentage").asText());
+            goalStatistic.setTotalAgGoals61to75Min(response.path("goals").path("against").path("minute").path("61-75").path("total").asLong());
+            goalStatistic.setAvgAgGoals61to75Min(response.path("goals").path("against").path("minute").path("61-75").path("percentage").asText());
+            goalStatistic.setTotalAgGoals76to90Min(response.path("goals").path("against").path("minute").path("76-90").path("total").asLong());
+            goalStatistic.setAvgAgGoals76to90Min(response.path("goals").path("against").path("minute").path("76-90").path("percentage").asText());
+            goalStatistic.setTotalAgGoals91to105Min(response.path("goals").path("against").path("minute").path("91-105").path("total").asLong());
+            goalStatistic.setAvgAgGoals91to105Min(response.path("goals").path("against").path("minute").path("91-105").path("percentage").asText());
+            goalStatistic.setTotalAgGoals106to120Min(response.path("goals").path("against").path("minute").path("106-120").path("total").asLong());
+            goalStatistic.setAvgAgGoals106to120Min(response.path("goals").path("against").path("minute").path("106-120").path("percentage").asText());
+
+            BiggestStatistic biggestStatistic = teamStatistic.getBiggestStatistic();
+            if (biggestStatistic == null){
+                biggestStatistic = BiggestStatistic.builder()
                 .teamStatistic(teamStatistic)
                 .build();
-            teamStatistic.setFixtureStatistic(fixtureStatistic);
-
-            GoalStatistic goalStatistic = GoalStatistic.builder()
-                .goalsForHome(response.path("goals").path("for").path("total").path("home").asLong())
-                .goalsForAway(response.path("goals").path("for").path("total").path("away").asLong())
-                .goalsForTotal(response.path("goals").path("for").path("total").path("total").asLong())
-                .goalsAgainstHome(response.path("goals").path("against").path("total").path("home").asLong())
-                .goalsAgainstAway(response.path("goals").path("against").path("total").path("away").asLong())
-                .goalsAgainstTotal(response.path("goals").path("against").path("total").path("total").asLong())
-                .averageGoalsForHome(response.path("goals").path("for").path("average").path("home").asText())
-                .averageGoalsForAway(response.path("goals").path("for").path("average").path("away").asText())
-                .averageGoalsForTotal(response.path("goals").path("for").path("average").path("total").asText())
-                .averageGoalsAgainstHome(response.path("goals").path("against").path("average").path("home").asText())
-                .averageGoalsAgainstAway(response.path("goals").path("against").path("average").path("away").asText())
-                .averageGoalsAgainstTotal(response.path("goals").path("against").path("average").path("total").asText())
-                .teamStatistic(teamStatistic)
-                .build();
-            UnderOverStatistic for_uo1 = UnderOverStatistic.builder()
-                .overUnderValue("0.5")
-                .over(response.path("goals").path("for").path("under_over").path("0.5").path("over").asLong())
-                .under(response.path("goals").path("for").path("under_over").path("0.5").path("under").asLong())
-                .type(UnderOverType.FOR)
-                .goalStatistic(goalStatistic)
-                .build();
-            UnderOverStatistic for_uo2 = UnderOverStatistic.builder()
-                .overUnderValue("1.5")
-                .over(response.path("goals").path("for").path("under_over").path("1.5").path("over").asLong())
-                .under(response.path("goals").path("for").path("under_over").path("1.5").path("under").asLong())
-                .type(UnderOverType.FOR)
-                .goalStatistic(goalStatistic)
-                .build();
-            UnderOverStatistic for_uo3 = UnderOverStatistic.builder()
-                .overUnderValue("2.5")
-                .over(response.path("goals").path("for").path("under_over").path("2.5").path("over").asLong())
-                .under(response.path("goals").path("for").path("under_over").path("2.5").path("under").asLong())
-                .type(UnderOverType.FOR)
-                .goalStatistic(goalStatistic)
-                .build();
-            UnderOverStatistic for_uo4 = UnderOverStatistic.builder()
-                .overUnderValue("3.5")
-                .over(response.path("goals").path("for").path("under_over").path("3.5").path("over").asLong())
-                .under(response.path("goals").path("for").path("under_over").path("3.5").path("under").asLong())
-                .type(UnderOverType.FOR)
-                .goalStatistic(goalStatistic)
-                .build();
-            UnderOverStatistic for_uo5 = UnderOverStatistic.builder()
-                .overUnderValue("4.5")
-                .over(response.path("goals").path("for").path("under_over").path("4.5").path("over").asLong())
-                .under(response.path("goals").path("for").path("under_over").path("4.5").path("under").asLong())
-                .type(UnderOverType.FOR)
-                .goalStatistic(goalStatistic)
-                .build();                
-            UnderOverStatistic ag_uo1 = UnderOverStatistic.builder()
-                .overUnderValue("0.5")
-                .over(response.path("goals").path("against").path("under_over").path("0.5").path("over").asLong())
-                .under(response.path("goals").path("against").path("under_over").path("0.5").path("under").asLong())
-                .type(UnderOverType.AGAINST)
-                .goalStatistic(goalStatistic)
-                .build();
-            UnderOverStatistic ag_uo2 = UnderOverStatistic.builder()
-                .overUnderValue("1.5")
-                .over(response.path("goals").path("against").path("under_over").path("1.5").path("over").asLong())
-                .under(response.path("goals").path("against").path("under_over").path("1.5").path("under").asLong())
-                .type(UnderOverType.AGAINST)
-                .goalStatistic(goalStatistic)
-                .build();
-            UnderOverStatistic ag_uo3 = UnderOverStatistic.builder()
-                .overUnderValue("2.5")
-                .over(response.path("goals").path("against").path("under_over").path("2.5").path("over").asLong())
-                .under(response.path("goals").path("against").path("under_over").path("2.5").path("under").asLong())
-                .type(UnderOverType.AGAINST)
-                .goalStatistic(goalStatistic)
-                .build();
-            UnderOverStatistic ag_uo4 = UnderOverStatistic.builder()
-                .overUnderValue("3.5")
-                .over(response.path("goals").path("against").path("under_over").path("3.5").path("over").asLong())
-                .under(response.path("goals").path("against").path("under_over").path("3.5").path("under").asLong())
-                .type(UnderOverType.AGAINST)
-                .goalStatistic(goalStatistic)
-                .build();
-            UnderOverStatistic ag_uo5 = UnderOverStatistic.builder()
-                .overUnderValue("4.5")
-                .over(response.path("goals").path("against").path("under_over").path("4.5").path("over").asLong())
-                .under(response.path("goals").path("against").path("under_over").path("4.5").path("under").asLong())
-                .type(UnderOverType.AGAINST)
-                .goalStatistic(goalStatistic)
-                .build();
-            goalStatistic.setUnderOverStatistics(Arrays.asList(for_uo1, for_uo2, for_uo3, for_uo4, for_uo5, ag_uo1, ag_uo2, ag_uo3, ag_uo4, ag_uo5));
-
-            MinuteStatistic for_m1 = MinuteStatistic.builder()
-                .minuteRange("0-15")
-                .totalGoals(response.path("goals").path("for").path("minute").path("0-15").path("total").asLong())
-                .percentage(response.path("goals").path("for").path("minute").path("0-15").path("percentage").asText())
-                .type(UnderOverType.FOR)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic for_m2 = MinuteStatistic.builder()
-                .minuteRange("16-30")
-                .totalGoals(response.path("goals").path("for").path("minute").path("16-30").path("total").asLong())
-                .percentage(response.path("goals").path("for").path("minute").path("16-30").path("percentage").asText())
-                .type(UnderOverType.FOR)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic for_m3 = MinuteStatistic.builder()
-                .minuteRange("31-45")
-                .totalGoals(response.path("goals").path("for").path("minute").path("31-45").path("total").asLong())
-                .percentage(response.path("goals").path("for").path("minute").path("31-45").path("percentage").asText())
-                .type(UnderOverType.FOR)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic for_m4 = MinuteStatistic.builder()
-                .minuteRange("46-60")
-                .totalGoals(response.path("goals").path("for").path("minute").path("46-60").path("total").asLong())
-                .percentage(response.path("goals").path("for").path("minute").path("46-60").path("percentage").asText())
-                .type(UnderOverType.FOR)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic for_m5 = MinuteStatistic.builder()
-                .minuteRange("61-75")
-                .totalGoals(response.path("goals").path("for").path("minute").path("61-75").path("total").asLong())
-                .percentage(response.path("goals").path("for").path("minute").path("61-75").path("percentage").asText())
-                .type(UnderOverType.FOR)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic for_m6 = MinuteStatistic.builder()
-                .minuteRange("76-90")
-                .totalGoals(response.path("goals").path("for").path("minute").path("61-75").path("total").asLong())
-                .percentage(response.path("goals").path("for").path("minute").path("61-75").path("percentage").asText())
-                .type(UnderOverType.FOR)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic for_m7 = MinuteStatistic.builder()
-                .minuteRange("91-105")
-                .totalGoals(response.path("goals").path("for").path("minute").path("61-75").path("total").asLong())
-                .percentage(response.path("goals").path("for").path("minute").path("61-75").path("percentage").asText())
-                .type(UnderOverType.FOR)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic for_m8 = MinuteStatistic.builder()
-                .minuteRange("106-120")
-                .totalGoals(response.path("goals").path("for").path("minute").path("61-75").path("total").asLong())
-                .percentage(response.path("goals").path("for").path("minute").path("61-75").path("percentage").asText())
-                .type(UnderOverType.FOR)
-                .goalStatistic(goalStatistic)
-                .build();            
-            MinuteStatistic ag_m1 = MinuteStatistic.builder()
-                .minuteRange("0-15")
-                .totalGoals(response.path("goals").path("against").path("minute").path("0-15").path("total").asLong())
-                .percentage(response.path("goals").path("against").path("minute").path("0-15").path("percentage").asText())
-                .type(UnderOverType.AGAINST)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic ag_m2 = MinuteStatistic.builder()
-                .minuteRange("16-30")
-                .totalGoals(response.path("goals").path("against").path("minute").path("16-30").path("total").asLong())
-                .percentage(response.path("goals").path("against").path("minute").path("16-30").path("percentage").asText())
-                .type(UnderOverType.AGAINST)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic ag_m3 = MinuteStatistic.builder()
-                .minuteRange("31-45")
-                .totalGoals(response.path("goals").path("against").path("minute").path("31-45").path("total").asLong())
-                .percentage(response.path("goals").path("against").path("minute").path("31-45").path("percentage").asText())
-                .type(UnderOverType.AGAINST)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic ag_m4 = MinuteStatistic.builder()
-                .minuteRange("46-60")
-                .totalGoals(response.path("goals").path("against").path("minute").path("46-60").path("total").asLong())
-                .percentage(response.path("goals").path("against").path("minute").path("46-60").path("percentage").asText())
-                .type(UnderOverType.AGAINST)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic ag_m5 = MinuteStatistic.builder()
-                .minuteRange("61-75")
-                .totalGoals(response.path("goals").path("against").path("minute").path("61-75").path("total").asLong())
-                .percentage(response.path("goals").path("against").path("minute").path("61-75").path("percentage").asText())
-                .type(UnderOverType.AGAINST)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic ag_m6 = MinuteStatistic.builder()
-                .minuteRange("76-90")
-                .totalGoals(response.path("goals").path("against").path("minute").path("61-75").path("total").asLong())
-                .percentage(response.path("goals").path("against").path("minute").path("61-75").path("percentage").asText())
-                .type(UnderOverType.AGAINST)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic ag_m7 = MinuteStatistic.builder()
-                .minuteRange("91-105")
-                .totalGoals(response.path("goals").path("against").path("minute").path("61-75").path("total").asLong())
-                .percentage(response.path("goals").path("against").path("minute").path("61-75").path("percentage").asText())
-                .type(UnderOverType.AGAINST)
-                .goalStatistic(goalStatistic)
-                .build();
-            MinuteStatistic ag_m8 = MinuteStatistic.builder()
-                .minuteRange("106-120")
-                .totalGoals(response.path("goals").path("against").path("minute").path("61-75").path("total").asLong())
-                .percentage(response.path("goals").path("against").path("minute").path("61-75").path("percentage").asText())
-                .type(UnderOverType.AGAINST)
-                .goalStatistic(goalStatistic)
-                .build();
-            goalStatistic.setMinuteStatistics(Arrays.asList(for_m1, for_m2, for_m3, for_m4, for_m5, for_m6, for_m7, for_m8,
-                                                            ag_m1, ag_m2, ag_m3, ag_m4, ag_m5, ag_m6, ag_m7, ag_m8));
-            teamStatistic.setGoalStatistic(goalStatistic);
-
-            BiggestStatistic biggestStatistic = BiggestStatistic.builder()
-                .streakWins(response.path("biggest").path("streak").path("wins").asLong())
-                .streakDraws(response.path("biggest").path("streak").path("draws").asLong())
-                .streakLoses(response.path("biggest").path("streak").path("loses").asLong())
-                .winsHome(response.path("biggest").path("wins").path("home").asText())
-                .winsAway(response.path("biggest").path("wins").path("away").asText())
-                .losesHome(response.path("biggest").path("loses").path("home").asText())
-                .losesAway(response.path("biggest").path("loses").path("away").asText())
-                .goalsForHome(response.path("biggest").path("goals").path("for").path("home").asLong())
-                .goalsForAway(response.path("biggest").path("goals").path("for").path("away").asLong())
-                .goalsAgainstHome(response.path("biggest").path("goals").path("against").path("home").asLong())
-                .goalsAgainstAway(response.path("biggest").path("goals").path("against").path("away").asLong())
-                .build();
-            teamStatistic.setBiggestStatistic(biggestStatistic);
+                teamStatistic.setBiggestStatistic(biggestStatistic);
+            }
+            biggestStatistic.setStreakWins(response.path("biggest").path("streak").path("wins").asLong());
+            biggestStatistic.setStreakDraws(response.path("biggest").path("streak").path("draws").asLong());
+            biggestStatistic.setStreakLoses(response.path("biggest").path("streak").path("loses").asLong());
+            biggestStatistic.setWinsHome(response.path("biggest").path("wins").path("home").asText());
+            biggestStatistic.setWinsAway(response.path("biggest").path("wins").path("away").asText());
+            biggestStatistic.setLosesHome(response.path("biggest").path("loses").path("home").asText());
+            biggestStatistic.setLosesAway(response.path("biggest").path("loses").path("away").asText());
+            biggestStatistic.setGoalsForHome(response.path("biggest").path("goals").path("for").path("home").asLong());
+            biggestStatistic.setGoalsForAway(response.path("biggest").path("goals").path("for").path("away").asLong());
+            biggestStatistic.setGoalsAgainstHome(response.path("biggest").path("goals").path("against").path("home").asLong());
+            biggestStatistic.setGoalsAgainstAway(response.path("biggest").path("goals").path("against").path("away").asLong());
 
             teamStatistic.setYellowCard0to15(response.path("cards").path("yellow").path("0-15").path("total").asLong());
             teamStatistic.setYellowCard16to30(response.path("cards").path("yellow").path("16-30").path("total").asLong());
@@ -331,20 +210,8 @@ public class TeamStatisticsService {
             teamStatistic.setPerRedCard91to105(response.path("cards").path("red").path("91-105").path("percentage").asLong());
             teamStatistic.setPerRedCard106to120(response.path("cards").path("red").path("106-120").path("percentage").asLong());
 
-            if (teamStatisticsRepository.existsByTeamIdAndLeagueId(teamStatistic.getTeamId(), teamStatistic.getLeagueId())){
-                TeamStatistic existingStatistic = teamStatisticsRepository.findByTeamIdAndLeagueId(teamStatistic.getTeamId(), teamStatistic.getLeagueId());
-                
-                Long repeatId = existingStatistic.getId();                
-                teamStatisticsRepository.deleteById(repeatId);
+            teamStatisticsRepository.save(teamStatistic);
 
-                // ID'yi koruyarak, tüm alanları yeni nesneden güncelle
-                teamStatistic.setId(repeatId);
-                
-                // Güncellenmiş nesneyi kaydet
-                teamStatisticsRepository.save(teamStatistic);
-            }else {
-                teamStatisticsRepository.save(teamStatistic);
-            }
             TimeUnit.SECONDS.sleep(2);
         } catch (Exception e) {
             e.printStackTrace();
