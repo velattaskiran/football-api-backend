@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.taskiran.footballapibackend.dto.AddFixturesRequest;
 import com.taskiran.footballapibackend.dto.AddPlayerStatisticRequest;
 import com.taskiran.footballapibackend.dto.AddTeamStatisticsRequest;
 import com.taskiran.footballapibackend.repository.LeagueRepository;
@@ -33,6 +34,8 @@ public class TaskService {
     public void executeTasks() {
         saveTeamStatistics();
         savePlayerStatistics();
+        saveFixtures();
+        saveStandings();
     }
 
     private void saveTeamStatistics() {
@@ -59,6 +62,28 @@ public class TaskService {
         for (String leagueName : leagueNames){
             String teamName = "x";
             AddPlayerStatisticRequest request = new AddPlayerStatisticRequest(leagueName, teamName);
+            String response = restTemplate.postForObject(url, request, String.class);
+            System.out.println(leagueName + " --- Response :" + response);
+        }
+    }
+
+    private void saveFixtures(){
+        String url = "http://localhost:8081/saveFixturesByLeagueName";
+        List<String> leagueNames = leagueRepository.findAllLeagueNames();
+
+        for (String leagueName : leagueNames){
+            AddFixturesRequest request = new AddFixturesRequest(leagueName, 2024L);
+            String response = restTemplate.postForObject(url, request, String.class);
+            System.out.println(leagueName + " --- Response :" + response);
+        }
+    }
+
+    private void saveStandings(){
+        String url = "http://localhost:8081/saveStandingsByLeagueName";
+        List<String> leagueNames = leagueRepository.findAllLeagueNames();
+
+        for (String leagueName : leagueNames){
+            AddFixturesRequest request = new AddFixturesRequest(leagueName, 2024L);
             String response = restTemplate.postForObject(url, request, String.class);
             System.out.println(leagueName + " --- Response :" + response);
         }

@@ -96,6 +96,13 @@ public class FootballApiService {
     }
 
 // ** ------------------------------------------------------------------------------------------------------- **
+// Get Fixtures
+    public String getFixturesByLeagueId(Long leagueId, Long season) {
+        String endpoint = "/fixtures?league=" + leagueId.toString()  + "&season=" + season.toString();
+        return makeApiRequest(endpoint, apiIndex);
+    }
+
+// ** ------------------------------------------------------------------------------------------------------- **
 // Check Request Count
     private void checkRequestCount(){
         requestCount++;
