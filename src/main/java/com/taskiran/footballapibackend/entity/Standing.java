@@ -29,6 +29,9 @@ public class Standing {
     @Column(name = "team_name", nullable = false)
     private String teamName;
 
+    @Column(name = "team_logo", nullable = false)
+    private String teamLogo;
+
     @Column(name = "rank")
     private Integer rank;
 

@@ -51,6 +51,7 @@ public class StandingService {
                         team.setLeagueName(leagueNode.path("name").asText());
                         team.setTeamId(teamNode.path("team").path("id").asLong());
                         team.setTeamName(teamNode.path("team").path("name").asText());
+                        team.setTeamLogo(teamNode.path("team").path("logo").asText());
                         team.setRank(teamNode.path("rank").asInt());
                         team.setPoints(teamNode.path("points").asInt());
                         team.setGoalsDiff(teamNode.path("goalsDiff").asInt());
